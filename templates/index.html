@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ROV Controller</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Custom styles for enhanced visuals */
+    #camera-feed {
+      background-color: #000;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #4b5563;
+      border-radius: 8px;
+    }
+    #status.connected { color: #10b981; }
+    #status.disconnected { color: #ef4444; }
+    #status-message { transition: opacity 0.5s; }
+    .grid {
+      display: grid;
+      grid-template-columns: 50% 50%;
+      grid-template-rows: 50% 50%;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    .cam-box {
+      position: relative;
+      border: 2px solid #444;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-start p-4 space-y-6">
+  <!-- Header -->
+  <h1 class="text-3xl font-bold text-gray-800">ROV Gamepad Control</h1>
+
+  <!-- Camera Feed Section -->
+  <div class="w-full max-w-3xl">
+    <h2 class="text-xl font-semibold text-gray-700 mb-2">Live Camera Feed</h2>
+    <div id="camera-feed" class="w-full h-96">
+      <div class ="grid">
+        <div class="cam-box"><div class="label">Front Camera</div><img src="{{url_for('feed', cam_id='front')}}"></div>
+        <div class="cam-box"><div class="label">Back Camera</div><img src="{{url_for('feed', cam_id='back')}}"></div>
+        <div class="cam-box"><div class="label">Left Camera</div><img src="{{url_for('feed', cam_id='left')}}"></div>
+        <div class="cam-box"><div class="label">Right Camera</div><img src="{{url_for('feed', cam_id='right')}}"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gamepad Control Section -->
+  <div class="w-full max-w-3xl bg-white p-6 rounded-lg shadow-md">
+    <h2 class="text-xl font-semibold text-gray-700 mb-4">Gamepad Control</h2>
+    <p id="status" class="text-center text-lg font-medium disconnected">No gamepad connected</p>
+    <p id="status-message" class="text-center text-sm text-gray-500 mt-2"></p>
+    <div class="grid grid-cols-3 gap-4 text-center mt-4">
+      <div>
+        <span class="font-medium">Yaw:</span>
+        <span id="xValue" class="text-gray-600">0.00</span>
+      </div>
+      <div>
+        <span class="font-medium">Up/Down:</span>
+        <span id="yValue" class="text-gray-600">0.00</span>
+      </div>
+      <div>
+        <span class="font-medium">Claw:</span>
+        <span id="clawValue" class="text-gray-600">neutral</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stop Button -->
+  <button onclick="stopThrusters()" class="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-lg transition duration-200">
+    STOP
+  </button>
+
+  <script>
+    window.onload = () => {
+      const WS_URL = "ws://{{host}}:{{port}}";
+      let ws = null;
+      let gamepadIndex = null;
+      const DEADZONE = 0.1;
+
+      // Initialize WebSocket
+      function connectWebSocket() {
+        ws = new WebSocket(WS_URL);
+        
+        ws.onopen = () => {
+          console.log("WebSocket connected");
+          updateStatusMessage("Connected to ROV server", "text-green-600");
+        };
+
+        ws.onmessage = (event) => {
+          const data = JSON.parse(event.data);
+          console.log("Received from server:", data);
+          updateStatusMessage(data.message || "Server acknowledged", "text-blue-600");
+        };
+
+        ws.onclose = () => {
+          console.log("WebSocket disconnected");
+          updateStatusMessage("Disconnected from server, reconnecting...", "text-red-600");
+          setTimeout(connectWebSocket, 3000);
+        };
+
+        ws.onerror = (error) => {
+          console.error("WebSocket error:", error);
+          updateStatusMessage("WebSocket error occurred", "text-red-600");
+        };
+      }
+
+      // Update status message
+      function updateStatusMessage(message, className) {
+        const statusMessage = document.getElementById("status-message");
+        statusMessage.textContent = message;
+        statusMessage.className = `text-center text-sm ${className} mt-2`;
+        setTimeout(() => {
+          statusMessage.style.opacity = 0;
+          setTimeout(() => {
+            statusMessage.textContent = "";
+            statusMessage.style.opacity = 1;
+          }, 500);
+        }, 3000);
+      }
+
+      // Gamepad event handlers
+      window.addEventListener("gamepadconnected", (e) => {
+        console.log("Gamepad connected:", e.gamepad);
+        gamepadIndex = e.gamepad.index;
+        document.getElementById("status").textContent = `Gamepad connected: ${e.gamepad.id}`;
+        document.getElementById("status").className = "text-center text-lg font-medium connected";
+      });
+
+      window.addEventListener("gamepaddisconnected", (e) => {
+        console.log("Gamepad disconnected:", e.gamepad);
+        gamepadIndex = null;
+        document.getElementById("status").textContent = "No gamepad connected";
+        document.getElementById("status").className = "text-center text-lg font-medium disconnected";
+      });
+
+      // Stop thrusters
+      window.stopThrusters = function () {
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({ type: "stop" }));
+          console.log("Stop command sent");
+          updateStatusMessage("Stop command sent", "text-red-600");
+        } else {
+          console.error("WebSocket not connected");
+          updateStatusMessage("Cannot send stop command: WebSocket disconnected", "text-red-600");
+        }
+      };
+
+      // Send control data
+      function sendControl(payload) {
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({ type: "gamepad", ...payload }));
+          console.log("Control sent:", payload);
+        } else {
+          console.error("WebSocket not connected");
+          updateStatusMessage("Cannot send control: WebSocket disconnected", "text-red-600");
+        }
+      }
+
+      // Poll gamepad
+      function pollGamepad() {
+        if (gamepadIndex !== null) {
+          const gp = navigator.getGamepads()[gamepadIndex];
+          if (gp) {
+            // Left Joystick Y (Axis 1) for vertical movement
+            let vertical = -gp.axes[1]; // Normalize direction: up is positive, down is negative
+            vertical = Math.abs(vertical) < DEADZONE ? 0 : vertical; // Apply deadzone
+
+            // Right Joystick X (Axis 2) for yaw
+            let yaw = gp.axes[2]; // Left: negative, right: positive
+            yaw = Math.abs(yaw) < DEADZONE ? 0 : yaw; // Apply deadzone
+
+            // D-Pad Left/Right (Buttons 14/15) for claw
+            let claw = 0;
+            if (gp.buttons[14]?.pressed) claw = -1; // D-Pad Left - close
+            else if (gp.buttons[15]?.pressed) claw = 1; // D-Pad Right - open
+
+            // Update UI
+            document.getElementById("xValue").textContent = yaw.toFixed(2);
+            document.getElementById("yValue").textContent = vertical.toFixed(2);
+            document.getElementById("clawValue").textContent = claw;
+
+            // Send data if any input is active
+            if (vertical !== 0 || yaw !== 0 || claw !== 0) {
+              sendControl({
+                vertical: vertical.toFixed(2),
+                yaw: yaw.toFixed(2),
+                claw: claw.toFixed(1)
+              });
+            }
+
+            // Debug: Log axes and buttons
+            console.log("Axes:", gp.axes.map(a => a.toFixed(2)));
+            console.log("Buttons:", gp.buttons.map((b, i) => `${i}: ${b.pressed ? "pressed" : "released"}`));
+          }
+        }
+        requestAnimationFrame(pollGamepad);
+      }
+
+      // Start WebSocket and gamepad polling
+      connectWebSocket();
+      pollGamepad();
+    };
+  </script>
+</body>
+</html>
