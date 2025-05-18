@@ -13,6 +13,7 @@ from flask import Flask, render_template, request, Response
 import configparser
 # Local imports
 import websock
+import webcam
 
 config = configparser.ConfigParser()
 config.read("config.ini")
@@ -36,6 +37,13 @@ def index():
     if not auth or not check_auth(auth.username, auth.password):
         return authenticate()
     return render_template("index.html", host=HOST, port=SOCKPORT)
+
+@app.route('/feed/<cam_id>')
+def feed(cam_id):
+    if cam_id not in webcam.cameras:
+        return Response("Camera not found", 404)
+    else:
+        return Response(webcam.cameras[cam_id].read(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 def main():
     app.run(host=HOST, port=PORT, debug=False)
