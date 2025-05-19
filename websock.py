@@ -84,7 +84,7 @@ async def handleWebsocket(websocket):
                     else:
                         saber.down()
                         current_command = "down"
-                else: 
+                elif abs(gamepad_data["vertical"]) <= DEADZONE: 
                     saber.stopupdown()
                 if abs(gamepad_data["thrust"]) > DEADZONE:
                     if gamepad_data["thrust"] > 0: 
