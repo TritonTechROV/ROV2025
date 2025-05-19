@@ -61,6 +61,10 @@
         <span id="xValue" class="text-gray-600">0.00</span>
       </div>
       <div>
+        <span class="font-medium">Thrust:</span>
+        <span id="thrustValue" class="text-gray-600">0.00</span>
+      </div>
+      <div>
         <span class="font-medium">Up/Down:</span>
         <span id="yValue" class="text-gray-600">0.00</span>
       </div>
@@ -174,6 +178,9 @@
             // Right Joystick X (Axis 2) for yaw
             let yaw = gp.axes[2]; // Left: negative, right: positive
             yaw = Math.abs(yaw) < DEADZONE ? 0 : yaw; // Apply deadzone
+            // Right Joystick Y (Axis 3) for forward/backward thrust
+            let thrust = -gp.axes[3]; // Forward: positive, backward: negative
+            thrust = Math.abs(thrust) < DEADZONE ? 0 : thrust; // Apply deadzone  
 
             // D-Pad Left/Right (Buttons 14/15) for claw
             let claw = 0;
@@ -183,12 +190,14 @@
             // Update UI
             document.getElementById("xValue").textContent = yaw.toFixed(2);
             document.getElementById("yValue").textContent = vertical.toFixed(2);
+            document.getElementById("thrustValue").textContent = thrust.toFixed(2);
             document.getElementById("clawValue").textContent = claw;
 
             // Send data if any input is active
             if (vertical !== 0 || yaw !== 0 || claw !== 0) {
               sendControl({
                 vertical: vertical.toFixed(2),
+                thrust: thrust.toFixed(2),
                 yaw: yaw.toFixed(2),
                 claw: claw.toFixed(1)
               });
