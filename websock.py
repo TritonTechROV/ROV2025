@@ -58,6 +58,7 @@ async def send_status(websocket, message):
             pass
 
 async def handleWebsocket(websocket):
+    global last_command
     threshold = 0.5  # Threshold for hard turns
     gamepad_data = {"vertical": 0.0, "yaw": 0.0, "thrust": 0.0, "claw": 0}
 
@@ -70,7 +71,7 @@ async def handleWebsocket(websocket):
                 new_data = parsePacket(data)
                 # Stop command received
                 if new_data == None:
-                    await send_status("ROV stopped")
+                    await send_status(websocket, "ROV stopped")
                     last_command = None
                     continue
                 else:
