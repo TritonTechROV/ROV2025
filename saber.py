@@ -48,7 +48,7 @@ def setup():
         exit(1)
     return ser1
 
-ser1 = setup
+ser1 = setup()
 
 def activate(whichSaber):
     time.sleep(SLEEP_TIME)
