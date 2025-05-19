@@ -47,7 +47,7 @@ def feed(cam_id):
         return Response(webcam.cameras[cam_id].read(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 def main():
-    app.run(host=HOST, port=PORT, debug=True)
+    app.run(host=HOST, port=PORT, debug=False)
 
 if __name__ == "__main__":
     thread = threading.Thread(target = main)
