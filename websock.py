@@ -69,6 +69,7 @@ async def handleWebsocket(websocket):
                 # Stop command received
                 if new_data == None:
                     await send_status(websocket, "ROV stopped")
+                    saber.stop()
                     last_command = None
                     continue
                 else:
