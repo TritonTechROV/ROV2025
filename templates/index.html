@@ -48,7 +48,7 @@
   <h1 class="text-3xl font-bold text-gray-800">ROV Gamepad Control</h1>
 
   <!-- Camera Feed Section -->
-  <div class="w-full max-w-3xl">
+  <div class="w-full max-w-4xl">
     <h2 class="text-xl font-semibold text-gray-700 mb-2">Live Camera Feed</h2>
     <div id="camera-feed" class="w-full h-96 columns-2">
       <!-- this section is for 4 equal size cameras -->
@@ -61,7 +61,7 @@
 
       <!-- this section is for 1 big and 3 small cameras -->
       <div class="lg-cam-box" id="big-cam"><div class="label">Front Camera</div><img src="{{url_for('feed', cam_id='front')}}"></div>
-      <div class ="grid grid-cols-1">
+      <div class ="grid-cols-1">
         <div class="cam-box"><div class="label">Back Camera</div><img src="{{url_for('feed', cam_id='back')}}"></div>
         <div class="cam-box"><div class="label">Left Camera</div><img src="{{url_for('feed', cam_id='left')}}"></div>
         <div class="cam-box"><div class="label">Right Camera</div><img src="{{url_for('feed', cam_id='right')}}"></div>
