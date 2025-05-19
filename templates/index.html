@@ -158,13 +158,19 @@
       };
 
       // Send control data
-      function sendControl(payload) {
+      function sendControl(gamepad, payload) {
         if (ws && ws.readyState === WebSocket.OPEN) {
           ws.send(JSON.stringify({ type: "gamepad", ...payload }));
           console.log("Control sent:", payload);
         } else {
           console.error("WebSocket not connected");
           updateStatusMessage("Cannot send control: WebSocket disconnected", "text-red-600");
+          gamepad.vibrationActuator.playEffect("dual-rumble", {
+            startDelay: 0,
+            duration: 200,
+            weakMagnitude: 1.0,
+            strongMagnitude: 1.0,
+          });
         }
       }
 
@@ -197,7 +203,7 @@
 
             // Send data if any input is active
             if (vertical !== 0 || yaw !== 0 || thrust !== 0 || claw !== 0) {
-              sendControl({
+              sendControl(gp, {
                 vertical: vertical.toFixed(2),
                 thrust: thrust.toFixed(2),
                 yaw: yaw.toFixed(2),
