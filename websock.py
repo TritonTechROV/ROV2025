@@ -28,6 +28,7 @@ def eStop():
     print("Stop command received")
     #ser1.write(ALLSTOP)
     saber.deactivateAll()
+    saber.stop()
 
 '''
         Parses data in message
@@ -50,9 +51,9 @@ def parsePacket(message):
     
     return gamepad
 
-async def send_status(message):
+async def send_status(websocket, message):
         try:
-            await websockets.send(json.dumps({"message": message}))
+            await websocket.send(json.dumps({"message": message}))
         except:
             pass
 
