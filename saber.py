@@ -64,6 +64,7 @@ def deactivateAll():
 
 def forward():
     activate(FORWARDSABER)
+    deactivate(UPSABER)
     ser1.write(FORWARD1)
     time.sleep(SLEEP_TIME)
     ser1.write(FORWARD2)
@@ -71,6 +72,7 @@ def forward():
 
 def backward():
     activate(FORWARDSABER)
+    deactivate(UPSABER)
     ser1.write(BACK1)
     time.sleep(SLEEP_TIME)
     ser1.write(BACK2)
@@ -78,6 +80,7 @@ def backward():
 
 def right():
     activate(FORWARDSABER)
+    deactivate(UPSABER)
     ser1.write(FORWARD2)
     time.sleep(SLEEP_TIME)
     ser1.write(STOP1)
@@ -85,6 +88,7 @@ def right():
 
 def hardRight():
     activate(FORWARDSABER)
+    deactivate(UPSABER)
     ser1.write(FORWARD2)
     time.sleep(SLEEP_TIME)
     ser1.write(BACK1)
@@ -92,6 +96,7 @@ def hardRight():
 
 def left():
     activate(FORWARDSABER)
+    deactivate(UPSABER)
     ser1.write(FORWARD1)
     time.sleep(SLEEP_TIME)
     ser1.write(STOP2)
@@ -99,6 +104,7 @@ def left():
 
 def hardLeft():
     activate(FORWARDSABER)
+    deactivate(UPSABER)
     ser1.write(FORWARD1)
     time.sleep(SLEEP_TIME)
     ser1.write(BACK2)
