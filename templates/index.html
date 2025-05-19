@@ -82,7 +82,7 @@
 
   <script>
     window.onload = () => {
-      const IP = location.host.split(":");
+      const IP = location.host.split(":")[0];
       console.log(IP + ":{{PORT}}")
       const WS_URL = "ws://" + LOCATION + ":{{PORT}}";
       let ws = null;
