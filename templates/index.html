@@ -23,17 +23,20 @@
       display: grid;
       grid-template-columns: 50% 50%;
       grid-template-rows: 50% 50%;
-      height: 100vh;
-      width: 100vw;
+      height: auto;
+      width: 800px;
     }
 
     .cam-box {
       position: relative;
       border: 2px solid #444;
+      width: fit-content;
+      height: fit-content;
+      max-width: 400px;
     }
   </style>
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-start p-4 space-y-6">
+<body class="bg-gray-100 min-h-screen max-h-screen flex flex-col items-center justify-start p-4 space-y-6">
   <!-- Header -->
   <h1 class="text-3xl font-bold text-gray-800">ROV Gamepad Control</h1>
 
@@ -51,8 +54,8 @@
   </div>
 
   <!-- Gamepad Control Section -->
-  <div class="w-full max-w-3xl bg-white p-6 rounded-lg shadow-md">
-    <h2 class="text-xl font-semibold text-gray-700 mb-4">Gamepad Control</h2>
+  <div class="w-full max-w-4xl bg-white p-6 rounded-lg shadow-md">
+    <h2 class="text-xl text-center font-semibold text-gray-700 mb-4">Gamepad Control</h2>
     <p id="status" class="text-center text-lg font-medium disconnected">No gamepad connected</p>
     <p id="status-message" class="text-center text-sm text-gray-500 mt-2"></p>
     <div class="grid grid-cols-3 gap-4 text-center mt-4">
@@ -68,6 +71,7 @@
         <span class="font-medium">Up/Down:</span>
         <span id="yValue" class="text-gray-600">0.00</span>
       </div>
+      <div></div>
       <div>
         <span class="font-medium">Claw:</span>
         <span id="clawValue" class="text-gray-600">neutral</span>
