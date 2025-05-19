@@ -165,12 +165,7 @@
         } else {
           console.error("WebSocket not connected");
           updateStatusMessage("Cannot send control: WebSocket disconnected", "text-red-600");
-          gamepad.vibrationActuator.playEffect("dual-rumble", {
-            startDelay: 0,
-            duration: 200,
-            weakMagnitude: 1.0,
-            strongMagnitude: 1.0,
-          });
+          gamepad.hapticActuators[0].pulse(1.0, 200);
         }
       }
 
