@@ -66,6 +66,7 @@ async def handleWebsocket(websocket):
             async for message in websocket:
                 data = json.loads(message)
                 new_data = parsePacket(data)
+                print(new_data)
                 # Stop command received
                 if new_data == None:
                     await send_status(websocket, "ROV stopped")
