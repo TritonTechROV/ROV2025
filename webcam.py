@@ -32,10 +32,10 @@ class WebcamStream:
         self.stopped = True
         self.stream.release()
 
-
+# Temporarily removing non-essential cameras
 cameras = {
-    "front": WebcamStream(src=config.get("CAMS", "front")),
-    "back": WebcamStream(src=config.get("CAMS", "back")),
-    "left": WebcamStream(src=config.get("CAMS", "left")),
-    "right": WebcamStream(src=config.get("CAMS", "right"))
+    "front": WebcamStream(src=config.get("CAMS", "front"))#,
+    #"back": WebcamStream(src=config.get("CAMS", "back")),
+    #"left": WebcamStream(src=config.get("CAMS", "left")),
+    #"right": WebcamStream(src=config.get("CAMS", "right"))
 }
