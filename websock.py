@@ -60,7 +60,7 @@ async def handleWebsocket(websocket):
     threshold = 0.5  # Threshold for hard turns
     gamepad_data = {"vertical": 0.0, "yaw": 0.0, "thrust": 0.0, "claw": 0}
 
-    print("Sabertooth initialized")
+    # print("Sabertooth initialized")
    
     while True:
         try:

@@ -42,6 +42,7 @@ def setup():
     GPIO.setup(FORWARDSABER, GPIO.OUT)
     try:
         ser1 = serial.Serial(serialPath, baudrate=9600, timeout=0.1)
+        print("Sabertooths set up.")
     except serial.SerialException as e:
         print(f"Failed to open {serialPath}: {e}")
         exit(1)
