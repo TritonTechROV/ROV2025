@@ -59,6 +59,8 @@ async def handleWebsocket(websocket):
     gamepad_data = {"vertical": 0.0, "yaw": 0.0, "thrust": 0.0, "claw": 0}
     last_command = None
 
+    saber.deactivateAll()
+
     # print("Sabertooth initialized")
    
     while True:

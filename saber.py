@@ -134,7 +134,5 @@ def stop():
     ser1.write(ALLSTOP)
     deactivateAll()
 
-deactivateAll()
-
 if __name__ == '__main__':
     stop()
