@@ -69,7 +69,7 @@ async def handleWebsocket(websocket):
                 new_data = parsePacket(data)
                 # Stop command received
                 if new_data == None:
-                    await send_status("ROV stopped")
+                    await send_status(websocket, "ROV stopped")
                     last_command = None
                     continue
                 else:
@@ -111,12 +111,12 @@ async def handleWebsocket(websocket):
                 # Claw control (placeholder)
                 if gamepad_data["claw"] != "neutral":
                     print(f"Claw command: {gamepad_data['claw']}")
-                    await send_status(f"Claw: {gamepad_data['claw']}")
+                    await send_status(websocket, f"Claw: {gamepad_data['claw']}")
 
                 # Log current state
                 if current_command != last_command:
                     print(f"Executing: {current_command or 'stopped'}, Vertical: {gamepad_data['vertical']:.2f}, Thrust: {gamepad_data['thrust']:.2f}, Yaw: {gamepad_data['yaw']:.2f}, Claw: {gamepad_data['claw']}")
-                    await send_status(f"Command: {current_command or 'stopped'}")
+                    await send_status(websocket, f"Command: {current_command or 'stopped'}")
                     last_command = current_command
 
                 await asyncio.sleep(1.0 / UPDATE_SPEED)
