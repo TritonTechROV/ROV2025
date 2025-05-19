@@ -14,6 +14,7 @@ import configparser
 # Local imports
 import websock
 import webcam
+import saber
 
 config = configparser.ConfigParser()
 config.read("config.ini")
@@ -49,6 +50,7 @@ def main():
     app.run(host=HOST, port=PORT, debug=False)
 
 if __name__ == "__main__":
+    saber.setup()
     thread = threading.Thread(target = main)
     thread.start()
     websock.start()
