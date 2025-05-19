@@ -115,7 +115,7 @@ async def handleWebsocket(websocket):
 
                 # Log current state
                 if current_command != last_command:
-                    print(f"Executing: {current_command or 'stopped'}, Vertical: {gamepad_data['vertical']:.2f}, Yaw: {gamepad_data['yaw']:.2f}, Claw: {gamepad_data['claw']}")
+                    print(f"Executing: {current_command or 'stopped'}, Vertical: {gamepad_data['vertical']:.2f}, Thrust: {gamepad_data['thrust']:.2f}, Yaw: {gamepad_data['yaw']:.2f}, Claw: {gamepad_data['claw']}")
                     await send_status(f"Command: {current_command or 'stopped'}")
                     last_command = current_command
 
