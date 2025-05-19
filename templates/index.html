@@ -194,7 +194,7 @@
             document.getElementById("clawValue").textContent = claw;
 
             // Send data if any input is active
-            if (vertical !== 0 || yaw !== 0 || claw !== 0) {
+            if (vertical !== 0 || yaw !== 0 || thrust !== 0 || claw !== 0) {
               sendControl({
                 vertical: vertical.toFixed(2),
                 thrust: thrust.toFixed(2),
