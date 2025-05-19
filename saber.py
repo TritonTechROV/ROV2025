@@ -24,10 +24,10 @@ UPSABER = 4
 FORWARDSABER = 17
 ON = GPIO.HIGH
 OFF = GPIO.LOW
-FULLFORWARD1 = intToBytes(127)
-FULLFORWARD2 = intToBytes(255)
-FULLBACK1 = intToBytes(1)
-FULLBACK2 = intToBytes(128)
+FORWARD1 = intToBytes(127)
+FORWARD2 = intToBytes(255)
+BACK1 = intToBytes(1)
+BACK2 = intToBytes(128)
 ALLSTOP = intToBytes(0)
 STOP1 = intToBytes(64)
 STOP2 = intToBytes(192)
@@ -64,44 +64,51 @@ def deactivateAll():
 
 def forward():
     activate(FORWARDSABER)
-    ser1.write(FULLFORWARD1)
-    ser1.write(FULLFORWARD2)
+    ser1.write(FORWARD1)
+    time.sleep(SLEEP_TIME)
+    ser1.write(FORWARD2)
     deactivate(FORWARDSABER)
 
 def backward():
     activate(FORWARDSABER)
-    ser1.write(FULLBACK1)
-    ser1.write(FULLBACK2)
+    ser1.write(BACK1)
+    time.sleep(SLEEP_TIME)
+    ser1.write(BACK2)
     deactivate(FORWARDSABER)
 
 def right():
     activate(FORWARDSABER)
-    ser1.write(FULLFORWARD2)
+    ser1.write(FORWARD2)
+    time.sleep(SLEEP_TIME)
     ser1.write(STOP1)
     deactivate(FORWARDSABER)
 
 def hardRight():
     activate(FORWARDSABER)
-    ser1.write(FULLFORWARD2)
-    ser1.write(FULLBACK1)
+    ser1.write(FORWARD2)
+    time.sleep(SLEEP_TIME)
+    ser1.write(BACK1)
     deactivate(FORWARDSABER)
 
 def left():
     activate(FORWARDSABER)
-    ser1.write(FULLFORWARD1)
+    ser1.write(FORWARD1)
+    time.sleep(SLEEP_TIME)
     ser1.write(STOP2)
     deactivate(FORWARDSABER)
 
 def hardLeft():
     activate(FORWARDSABER)
-    ser1.write(FULLFORWARD1)
-    ser1.write(FULLBACK2)
+    ser1.write(FORWARD1)
+    time.sleep(SLEEP_TIME)
+    ser1.write(BACK2)
     deactivate(FORWARDSABER)
 
 def up():
     activate(UPSABER)
-    ser1.write(FULLFORWARD1)
-    ser1.write(FULLFORWARD2)
+    ser1.write(FORWARD1)
+    time.sleep(SLEEP_TIME)
+    ser1.write(FORWARD2)
     deactivate(UPSABER)
 
 def stopforwardback():
@@ -116,8 +123,9 @@ def stopupdown():
 
 def down():
     activate(UPSABER)
-    ser1.write(FULLBACK1)
-    ser1.write(FULLBACK2)
+    ser1.write(BACK1)
+    time.sleep(SLEEP_TIME)
+    ser1.write(BACK2)
     deactivate(UPSABER)
 
 def stop():
