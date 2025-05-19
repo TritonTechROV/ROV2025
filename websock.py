@@ -83,6 +83,8 @@ async def handleWebsocket(websocket):
                     else:
                         saber.down()
                         current_command = "down"
+                else: 
+                    saber.stopupdown()
                 if abs(gamepad_data["thrust"]) > DEADZONE:
                     if gamepad_data["thrust"] > 0: 
                         saber.forward()
@@ -103,13 +105,15 @@ async def handleWebsocket(websocket):
                     else:
                         saber.left()
                         current_command = "left"
+                if abs(gamepad_data["thrust"]) <= DEADZONE and abs(gamepad_data["yaw"]) <= DEADZONE:
+                    saber.stopforwardback()
                 if abs(gamepad_data["yaw"]) < DEADZONE and abs(gamepad_data["thrust"]) < DEADZONE and abs(gamepad_data["vertical"]) < DEADZONE:
                     saber.stop()
                     current_command = None
 
                 # Claw control (placeholder)
                 if gamepad_data["claw"] != "neutral":
-                    print(f"Claw command: {gamepad_data['claw']}")
+                    # print(f"Claw command: {gamepad_data['claw']}")
                     await send_status(websocket, f"Claw: {gamepad_data['claw']}")
 
                 # Log current state
