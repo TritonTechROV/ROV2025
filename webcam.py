@@ -34,8 +34,8 @@ class WebcamStream:
 
 
 cameras = {
-    "front": WebcamStream(src=0),
-    "back": WebcamStream(src=1),
-    "left": WebcamStream(src=2),
-    "right": WebcamStream(src=3)
+    "front": WebcamStream(src=config.get("CAMS", "front")),
+    "back": WebcamStream(src=config.get("CAMS", "back")),
+    "left": WebcamStream(src=config.get("CAMS", "left")),
+    "right": WebcamStream(src=config.get("CAMS", "right"))
 }
