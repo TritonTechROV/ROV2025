@@ -24,7 +24,14 @@
       grid-template-columns: 50% 50%;
       grid-template-rows: 50% 50%;
       height: auto;
-      width: 800px;
+      width: 1200px;
+    }
+
+    .lg-cam-box {
+      position: relative;
+      border: 2px solid #444;
+      height: auto;
+      max-width: 900px;
     }
 
     .cam-box {
@@ -32,7 +39,7 @@
       border: 2px solid #444;
       width: fit-content;
       height: fit-content;
-      max-width: 400px;
+      max-width: 300px;
     }
   </style>
 </head>
@@ -43,13 +50,22 @@
   <!-- Camera Feed Section -->
   <div class="w-full max-w-3xl">
     <h2 class="text-xl font-semibold text-gray-700 mb-2">Live Camera Feed</h2>
-    <div id="camera-feed" class="w-full h-96">
-      <div class ="grid">
+    <div id="camera-feed" class="w-full h-96 columns-2">
+      <!-- this section is for 4 equal size cameras -->
+      <!-- <div class ="grid">
         <div class="cam-box"><div class="label">Front Camera</div><img src="{{url_for('feed', cam_id='front')}}"></div>
         <div class="cam-box"><div class="label">Back Camera</div><img src="{{url_for('feed', cam_id='back')}}"></div>
         <div class="cam-box"><div class="label">Left Camera</div><img src="{{url_for('feed', cam_id='left')}}"></div>
         <div class="cam-box"><div class="label">Right Camera</div><img src="{{url_for('feed', cam_id='right')}}"></div>
-      </div>
+      </div> --> 
+
+      <!-- this section is for 1 big and 3 small cameras -->
+      <div class="lg-cam-box" id="big-cam"><div class="label">Front Camera</div><img src="{{url_for('feed', cam_id='front')}}"></div>
+      <div class ="grid grid-cols-1">
+        <div class="cam-box"><div class="label">Back Camera</div><img src="{{url_for('feed', cam_id='back')}}"></div>
+        <div class="cam-box"><div class="label">Left Camera</div><img src="{{url_for('feed', cam_id='left')}}"></div>
+        <div class="cam-box"><div class="label">Right Camera</div><img src="{{url_for('feed', cam_id='right')}}"></div>
+      </div> 
     </div>
   </div>
 
