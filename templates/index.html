@@ -82,8 +82,9 @@
 
   <script>
     window.onload = () => {
-      const LOCATION = location.host;
-      const WS_URL = "ws://" + LOCATION;
+      const IP = location.host.split(":");
+      console.log(IP + ":{{PORT}}")
+      const WS_URL = "ws://" + LOCATION + ":{{PORT}}";
       let ws = null;
       let gamepadIndex = null;
       const DEADZONE = 0.1;
