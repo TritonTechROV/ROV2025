@@ -19,8 +19,6 @@ PORT = config.getint("WEB", "sockport", fallback=8765)
 DEADZONE = config.getfloat("CONTROL", "deadzone", fallback=0.1)
 HOST = config.get("WEB", "host", fallback="127.0.0.1")
 
-last_command = None
-
 '''
     What the big red "Stop" button should do
 '''
@@ -59,6 +57,7 @@ async def send_status(websocket, message):
 async def handleWebsocket(websocket):
     threshold = 0.5  # Threshold for hard turns
     gamepad_data = {"vertical": 0.0, "yaw": 0.0, "thrust": 0.0, "claw": 0}
+    last_command = None
 
     # print("Sabertooth initialized")
    
