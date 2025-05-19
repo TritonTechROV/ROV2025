@@ -33,7 +33,6 @@ STOP1 = intToBytes(64)
 STOP2 = intToBytes(192)
 SLEEP_TIME = 0.001
 serialPath = config.get("CONTROL", "serial", fallback="/dev/ttyAMA0")
-ser1 = None
 
 # Sabertooth setup
 def setup():
@@ -46,6 +45,9 @@ def setup():
     except serial.SerialException as e:
         print(f"Failed to open {serialPath}: {e}")
         exit(1)
+    return ser1
+
+ser1 = setup
 
 def activate(whichSaber):
     time.sleep(SLEEP_TIME)
