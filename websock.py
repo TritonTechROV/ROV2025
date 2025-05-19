@@ -113,9 +113,9 @@ async def handleWebsocket(websocket):
                     current_command = None
 
                 # Claw control (placeholder)
-                if gamepad_data["claw"] != "neutral":
+                #if gamepad_data["claw"] != "neutral":
                     # print(f"Claw command: {gamepad_data['claw']}")
-                    await send_status(websocket, f"Claw: {gamepad_data['claw']}")
+                    #await send_status(websocket, f"Claw: {gamepad_data['claw']}")
 
                 # Log current state
                 if current_command != last_command:
