@@ -27,7 +27,6 @@ last_command = None
 def eStop():
     print("Stop command received")
     #ser1.write(ALLSTOP)
-    saber.deactivateAll()
     saber.stop()
 
 '''
