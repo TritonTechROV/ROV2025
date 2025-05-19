@@ -27,7 +27,7 @@ last_command = None
 def eStop():
     print("Stop command received")
     #ser1.write(ALLSTOP)
-    deactivateAll()
+    saber.deactivateAll()
 
 '''
         Parses data in message
@@ -35,11 +35,12 @@ def eStop():
         Runs estop procedure and returns None if the message is "stop". If not, returns gamepad status
 '''
 def parsePacket(message):
-    gamepad = {"vertical": 0.0, "yaw": 0.0, "claw": 0}
+    gamepad = {"vertical": 0.0, "yaw": 0.0, "thrust": 0.0, "claw": 0}
     if message["type"] == "gamepad":
         gamepad.update({
             "vertical": float(message["vertical"]),
             "yaw": float(message["yaw"]),
+            "thrust": float(message["thrust"]),
             "claw": float(message["claw"])
         })
     
@@ -51,13 +52,13 @@ def parsePacket(message):
 
 async def send_status(message):
         try:
-            await websocket.send(json.dumps({"message": message}))
+            await websockets.send(json.dumps({"message": message}))
         except:
             pass
 
 async def handleWebsocket(websocket):
     threshold = 0.5  # Threshold for hard turns
-    gamepad_data = {"vertical": 0.0, "yaw": 0.0, "claw": 0}
+    gamepad_data = {"vertical": 0.0, "yaw": 0.0, "thrust": 0.0, "claw": 0}
 
     print("Sabertooth initialized")
    
@@ -83,6 +84,13 @@ async def handleWebsocket(websocket):
                     else:
                         saber.down()
                         current_command = "down"
+                if abs(gamepad_data["thrust"]) > DEADZONE:
+                    if gamepad_data["thrust"] > 0: 
+                        saber.forward()
+                        current_command="forward"
+                    else:
+                        saber.backward()
+                        current_command="backward"
                 if abs(gamepad_data["yaw"]) > DEADZONE:
                     if gamepad_data["yaw"] > threshold:
                         saber.hardRight()
@@ -96,7 +104,7 @@ async def handleWebsocket(websocket):
                     else:
                         saber.left()
                         current_command = "left"
-                if abs(gamepad_data["yaw"]) < DEADZONE and abs(gamepad_data["vertical"]) < DEADZONE:
+                if abs(gamepad_data["yaw"]) < DEADZONE and abs(gamepad_data["thrust"]) < DEADZONE and abs(gamepad_data["vertical"]) < DEADZONE:
                     saber.stop()
                     current_command = None
 

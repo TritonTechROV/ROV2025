@@ -11,6 +11,7 @@
 import serial
 import RPi.GPIO as GPIO
 import configparser
+import time
 
 config = configparser.ConfigParser()
 config.read("config.ini")
