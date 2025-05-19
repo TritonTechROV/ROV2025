@@ -88,6 +88,7 @@
       let ws = null;
       let gamepadIndex = null;
       const DEADZONE = 0.1;
+      let prevData = null;
 
       // Initialize WebSocket
       function connectWebSocket() {
@@ -196,15 +197,19 @@
             document.getElementById("thrustValue").textContent = thrust.toFixed(2);
             document.getElementById("clawValue").textContent = claw;
 
-            // Send data if any input is active
-            if (vertical !== 0 || yaw !== 0 || thrust !== 0 || claw !== 0) {
-              sendControl(gp, {
-                vertical: vertical.toFixed(2),
-                thrust: thrust.toFixed(2),
-                yaw: yaw.toFixed(2),
-                claw: claw.toFixed(1)
-              });
+            let currentData = {
+              vertical: vertical.toFixed(2),
+              thrust: thrust.toFixed(2),
+              yaw: yaw.toFixed(2),
+              claw: claw.toFixed(1)
             }
+
+            // Send data if any changes have occurred
+            if (JSON.stringify(prevData) !== JSON.stringify(currentData)) {
+              sendControl(gp, currentData);
+            }
+
+            prevData = currentData;
 
             // Debug: Log axes and buttons
             //console.log("Axes:", gp.axes.map(a => a.toFixed(2)));
