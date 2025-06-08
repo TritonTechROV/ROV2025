@@ -11,6 +11,7 @@ import json
 import configparser
 # Local imports
 import saber
+import claw
 config = configparser.ConfigParser()
 config.read("config.ini")
 
@@ -26,6 +27,7 @@ def eStop():
     print("Stop command received")
     #ser1.write(ALLSTOP)
     saber.stop()
+    claw.control_claw(0) #hold
 
 '''
         Parses data in message
@@ -70,6 +72,7 @@ async def handleWebsocket(websocket):
                 if new_data == None:
                     await send_status(websocket, "ROV stopped")
                     saber.stop()
+                    claw.control_claw(0)
                     last_command = None
                     continue
                 else:
@@ -113,15 +116,13 @@ async def handleWebsocket(websocket):
                     saber.stop()
                     current_command = None
 
-                # Claw control (placeholder)
-                #if gamepad_data["claw"] != "neutral":
-                    # print(f"Claw command: {gamepad_data['claw']}")
-                    #await send_status(websocket, f"Claw: {gamepad_data['claw']}")
-
-                # Log current state
-                if current_command != last_command:
-                    print(f"Executing: {current_command or 'stopped'}, Vertical: {gamepad_data['vertical']:.2f}, Thrust: {gamepad_data['thrust']:.2f}, Yaw: {gamepad_data['yaw']:.2f}, Claw: {gamepad_data['claw']}")
-                    await send_status(websocket, f"Command: {current_command or 'stopped'}")
+                # Claw control
+                success, claw_status = claw.control_claw(gamepad_data["claw"])
+                if not success:
+                    await send_status(websocket, f"Claw error: {claw_status}")
+                elif current_command != last_command or gamepad_data["claw"]:
+                    await send_status(websocket, f"Command: {current_command or 'stopped'}, Claw: {claw_status}")
+                    print(f"Executing: {current_command or 'stopped'}, Vertical: {gamepad_data['vertical']:.2f}, Thrust: {gamepad_data['thrust']:.2f}, Yaw: {gamepad_data['yaw']:.2f}, Claw: {claw_status}")
                     last_command = current_command
 
                 await asyncio.sleep(1.0 / UPDATE_SPEED)
@@ -129,6 +130,7 @@ async def handleWebsocket(websocket):
         except websockets.exceptions.ConnectionClosed:
             print("WebSocket connection closed")
             saber.stop()
+            claw.control_claw(0)
             break
 
 async def _startWebsocketWerver():
