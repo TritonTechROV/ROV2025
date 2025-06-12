@@ -41,7 +41,7 @@ def parsePacket(message):
             "vertical": float(message["vertical"]),
             "yaw": float(message["yaw"]),
             "thrust": float(message["thrust"]),
-            "claw": int(message["claw"])
+            "claw": float(message["claw"])
         })
     
     elif message["type"] == "stop":
