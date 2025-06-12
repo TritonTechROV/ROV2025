@@ -14,7 +14,8 @@ PULSE_STEP = config.getint("CLAW", "pulse_step", fallback=10)  # Step size for g
 
 # Initialize PCA9685 servo controller
 try:
-    pwm = Adafruit_PCA9685.PCA9685(address=0x40, busnum=1)  # Default I2C address, bus 1
+    i2c = busio.I2C(SCL, SDA)
+    pwm = PCA9685(i2c)
     pwm.set_pwm_freq(50)  # 50Hz for servos
     print("PCA9685 initialized for claw servo")
 except Exception as e:
@@ -33,9 +34,11 @@ def set_servo_pulse(channel, pulse):
         return False, "PCA9685 not initialized"
     try:
         # Clamp pulse to valid range
-        pulse = max(CLOSED_PULSE, min(OPEN_PULSE, pulse))
+        pulse_us = max(CLOSED_PULSE, min(OPEN_PULSE, pulse_us))
+        duty_cycle = int((pulse_us / 20000.0) * 65535)
+        pwm.channels[channel].duty_cycle = duty_cycle
         pwm.set_pwm(channel, 0, pulse)
-        current_pulse = pulse
+        current_pulse = pulse_us
         print(f"Claw servo channel {channel} set to pulse {pulse}")
         return True, f"Pulse set to {pulse}"
     except Exception as e:
