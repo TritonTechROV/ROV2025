@@ -57,6 +57,7 @@ current_angle = 0
     #     return False, str(e)
 
 def control_claw(command):
+    global current_angle
     if command == OPEN: 
         if current_angle < MAX_ROTATION: 
             current_angle = current_angle + STEP
@@ -69,7 +70,7 @@ def control_claw(command):
                 current_angle = 0
     servo.angle = current_angle
 
-    return current_angle
+    return current_angle;
     # """Process claw command (1: open, -1: close, 0: hold/stop). Returns success and status message."""
     # global claw_state, current_pulse
     # if command == 1:  # Open (D-Pad Right)

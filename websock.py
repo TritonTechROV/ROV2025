@@ -117,13 +117,13 @@ async def handleWebsocket(websocket):
                     current_command = None
 
                 # Claw control
-                success, claw_status = claw.control_claw(gamepad_data["claw"])
-                if not success:
-                    await send_status(websocket, f"Claw error: {claw_status}")
-                elif current_command != last_command or gamepad_data["claw"]:
-                    await send_status(websocket, f"Command: {current_command or 'stopped'}, Claw: {claw_status}")
-                    print(f"Executing: {current_command or 'stopped'}, Vertical: {gamepad_data['vertical']:.2f}, Thrust: {gamepad_data['thrust']:.2f}, Yaw: {gamepad_data['yaw']:.2f}, Claw: {claw_status}")
-                    last_command = current_command
+                claw_status = claw.control_claw(gamepad_data["claw"])
+                # if not success:
+                #     await send_status(websocket, f"Claw error: {claw_status}")
+                # elif current_command != last_command or gamepad_data["claw"]:
+                await send_status(websocket, f"Command: {current_command or 'stopped'}, Claw: {claw_status}")
+                print(f"Executing: {current_command or 'stopped'}, Vertical: {gamepad_data['vertical']:.2f}, Thrust: {gamepad_data['thrust']:.2f}, Yaw: {gamepad_data['yaw']:.2f}, Claw: {claw_status}")
+                last_command = current_command
 
                 await asyncio.sleep(1.0 / UPDATE_SPEED)
 
