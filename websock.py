@@ -27,7 +27,7 @@ def eStop():
     print("Stop command received")
     #ser1.write(ALLSTOP)
     saber.stop()
-    claw.control_claw(0) #hold
+    claw.control_claw(claw.HOLD) #hold
 
 '''
         Parses data in message
@@ -41,7 +41,7 @@ def parsePacket(message):
             "vertical": float(message["vertical"]),
             "yaw": float(message["yaw"]),
             "thrust": float(message["thrust"]),
-            "claw": float(message["claw"])
+            "claw": int(message["claw"])
         })
     
     elif message["type"] == "stop":
@@ -72,7 +72,7 @@ async def handleWebsocket(websocket):
                 if new_data == None:
                     await send_status(websocket, "ROV stopped")
                     saber.stop()
-                    claw.control_claw(0)
+                    claw.control_claw(claw.HOLD)
                     last_command = None
                     continue
                 else:

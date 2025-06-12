@@ -28,9 +28,12 @@ servo = hat.servo[4]
 servo.actuation_range = config.getint("CLAW", "range", fallback=270)
 MAX_ROTATION = config.getint("CLAW", "maxrotation", fallback=180)
 STEP = config.getint("CLAW", "step", fallback=5) # how many degrees to turn per command
+OPEN = 1
+CLOSE = -1 
+HOLD = 0
 
 # Track current state and pulse
-current_pulse = CLOSED_PULSE  # Start at closed position
+current_state = OPEN  # Start at closed position
 # claw_state = 0  # 0: holding, 1: opening, -1: closing
 current_angle = 0
 
@@ -54,10 +57,10 @@ current_angle = 0
     #     return False, str(e)
 
 def control_claw(command):
-    if command == 1: 
+    if command == OPEN: 
         if current_angle < MAX_ROTATION: 
             current_angle = current_angle + STEP
-    if command == -1: 
+    if command == CLOSE: 
         if current_angle > 0:
             current_angle = current_angle - STEP
     servo.angle = current_angle
