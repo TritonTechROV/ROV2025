@@ -133,10 +133,11 @@ async def handleWebsocket(websocket):
             claw.control_claw(0)
             break
 
-async def _startWebsocketWerver():
+async def _startWebsocketServer():
     print(f"Starting websocket on port {PORT}")
     async with websockets.serve(handleWebsocket, HOST, PORT):
         await asyncio.Future()
 
 def start():
-    asyncio.run(_startWebsocketWerver())
+    asyncio.run(_startWebsocketServer())
+    
