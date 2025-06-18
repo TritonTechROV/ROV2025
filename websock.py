@@ -1,17 +1,16 @@
 #!/usr/bin/env python3
 
-'''
-    File for the websocket handler.
-'''
-
-import time
 import asyncio
 import websockets
 import json
 import configparser
-# Local imports
+import threading
+
+# Local modules
 import saber
 import claw
+
+# Load config
 config = configparser.ConfigParser()
 config.read("config.ini")
 
@@ -20,124 +19,95 @@ PORT = config.getint("WEB", "sockport", fallback=8765)
 DEADZONE = config.getfloat("CONTROL", "deadzone", fallback=0.1)
 HOST = config.get("WEB", "host", fallback="127.0.0.1")
 
-'''
-    What the big red "Stop" button should do
-'''
 def eStop():
     print("Stop command received")
-    #ser1.write(ALLSTOP)
     saber.stop()
-    claw.control_claw(claw.HOLD) #hold
+    claw.set_command(claw.HOLD)
 
-'''
-        Parses data in message
-        
-        Runs estop procedure and returns None if the message is "stop". If not, returns gamepad status
-'''
 def parsePacket(message):
-    gamepad = {"vertical": 0.0, "yaw": 0.0, "thrust": 0.0, "claw": 0}
-    if message["type"] == "gamepad":
-        gamepad.update({
+    if message["type"] == "stop":
+        eStop()
+        return None
+    elif message["type"] == "gamepad":
+        return {
             "vertical": float(message["vertical"]),
             "yaw": float(message["yaw"]),
             "thrust": float(message["thrust"]),
-            "claw": float(message["claw"])
-        })
-    
-    elif message["type"] == "stop":
-        eStop()
-        return None
-    
-    return gamepad
+            "claw": int(message["claw"])
+        }
+    return None
 
 async def send_status(websocket, message):
-        try:
-            await websocket.send(json.dumps({"message": message}))
-        except:
-            pass
+    try:
+        await websocket.send(json.dumps({"message": message}))
+    except:
+        pass
 
 async def handleWebsocket(websocket):
-    threshold = 0.5  # Threshold for hard turns
-    gamepad_data = {"vertical": 0.0, "yaw": 0.0, "thrust": 0.0, "claw": 0}
+    print("Client connected")
     last_command = None
 
-    # print("Sabertooth initialized")
-   
     while True:
         try:
             async for message in websocket:
                 data = json.loads(message)
-                new_data = parsePacket(data)
-                # Stop command received
-                if new_data == None:
+                gamepad_data = parsePacket(data)
+                if gamepad_data is None:
                     await send_status(websocket, "ROV stopped")
-                    saber.stop()
-                    claw.control_claw(claw.HOLD)
-                    last_command = None
                     continue
-                else:
-                    gamepad_data = new_data
-                 
-                # Map gamepad data to Sabertooth commands
-                current_command = None
+
                 saber.deactivateAll()
+                cmd = None
+
+                # Movement handling
                 if abs(gamepad_data["vertical"]) > DEADZONE:
-                    if gamepad_data["vertical"] > 0:
-                        saber.up()
-                        current_command = "up"
-                    else:
-                        saber.down()
-                        current_command = "down"
-                elif abs(gamepad_data["vertical"]) <= DEADZONE: 
+                    cmd = "up" if gamepad_data["vertical"] > 0 else "down"
+                    getattr(saber, cmd)()
+                else:
                     saber.stopupdown()
+
                 if abs(gamepad_data["thrust"]) > DEADZONE:
-                    if gamepad_data["thrust"] > 0: 
-                        saber.forward()
-                        current_command="forward"
-                    else:
-                        saber.backward()
-                        current_command="backward"
+                    cmd = "forward" if gamepad_data["thrust"] > 0 else "backward"
+                    getattr(saber, cmd)()
+                else:
+                    saber.stopforwardback()
+
                 if abs(gamepad_data["yaw"]) > DEADZONE:
-                    if gamepad_data["yaw"] > threshold:
+                    if gamepad_data["yaw"] > 0.5:
                         saber.hardRight()
-                        current_command = "hardRight"
+                        cmd = "hardRight"
                     elif gamepad_data["yaw"] > 0:
                         saber.right()
-                        current_command = "right"
-                    elif gamepad_data["yaw"] < -threshold:
+                        cmd = "right"
+                    elif gamepad_data["yaw"] < -0.5:
                         saber.hardLeft()
-                        current_command = "hardLeft"
+                        cmd = "hardLeft"
                     else:
                         saber.left()
-                        current_command = "left"
-                if abs(gamepad_data["thrust"]) <= DEADZONE and abs(gamepad_data["yaw"]) <= DEADZONE:
-                    saber.stopforwardback()
-                if abs(gamepad_data["yaw"]) < DEADZONE and abs(gamepad_data["thrust"]) < DEADZONE and abs(gamepad_data["vertical"]) < DEADZONE:
+                        cmd = "left"
+
+                if all(abs(gamepad_data[k]) <= DEADZONE for k in ["yaw", "thrust", "vertical"]):
                     saber.stop()
-                    current_command = None
 
                 # Claw control
-                claw_status = claw.control_claw(gamepad_data["claw"])
-                # if not success:
-                #     await send_status(websocket, f"Claw error: {claw_status}")
-                # elif current_command != last_command or gamepad_data["claw"]:
-                await send_status(websocket, f"Command: {current_command or 'stopped'}, Claw: {claw_status}")
-                print(f"Executing: {current_command or 'stopped'}, Vertical: {gamepad_data['vertical']:.2f}, Thrust: {gamepad_data['thrust']:.2f}, Yaw: {gamepad_data['yaw']:.2f}, Claw: {claw_status}")
-                last_command = current_command
+                claw.set_command(gamepad_data["claw"])
 
-                await asyncio.sleep(1.0 / UPDATE_SPEED)
+                await send_status(websocket, f"Command: {cmd or 'stopped'}, Claw: {gamepad_data['claw']}")
+                print(f"> {cmd or 'stopped'} | V:{gamepad_data['vertical']} T:{gamepad_data['thrust']} Y:{gamepad_data['yaw']} C:{gamepad_data['claw']}")
+
+                await asyncio.sleep(1 / UPDATE_SPEED)
 
         except websockets.exceptions.ConnectionClosed:
-            print("WebSocket connection closed")
-            saber.stop()
-            claw.control_claw(0)
+            print("WebSocket disconnected")
+            eStop()
             break
 
 async def _startWebsocketServer():
-    print(f"Starting websocket on port {PORT}")
+    print(f"WebSocket server running on {HOST}:{PORT}")
     async with websockets.serve(handleWebsocket, HOST, PORT):
         await asyncio.Future()
 
 def start():
+    # Start claw in background
+    threading.Thread(target=claw.control_claw, daemon=True).start()
     asyncio.run(_startWebsocketServer())
-    
