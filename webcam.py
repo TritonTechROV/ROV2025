@@ -17,14 +17,22 @@ class WebcamStream:
 
     def read(self):
         while True:
-            success,frame=self.stream.read()
-            if not success:
-                pass
-            else:
-                ret,buffer=cv2.imencode('.jpg',frame)
-                frame=buffer.tobytes()
+            success, frame = self.stream.read()
+            if not success or frame is None:
+                print(f"[WARNING] Failed to read frame from camera {self.src}")
+                time.sleep(0.1)
+                continue
+    
+            ret, buffer = cv2.imencode('.jpg', frame)
+            if not ret:
+                print(f"[WARNING] Failed to encode frame from camera {self.src}")
+                time.sleep(0.1)
+                continue
+    
+            frame = buffer.tobytes()
+    
+            yield (b'--frame\r\nContent-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
-            yield(b'--frame\r\n Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
 
     def stop(self):
