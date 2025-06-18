@@ -12,7 +12,7 @@ kit = ServoKit(channels=16)
 servo = kit.servo[4]
 servo.actuation_range = config.getint("CLAW", "range", fallback=270)
 MAX_ROTATION = config.getint("CLAW", "maxrotation", fallback=180)
-STEP = config.getint("CLAW", "step", fallback=5)
+STEP = config.getint("CLAW", "step", fallback=1)
 DELAY = 0.05  # movement delay
 
 # Claw directions
