@@ -60,47 +60,43 @@ async def handleWebsocket(websocket):
 
                 print(gamepad_data)
 
-                # Movement - Vertical
+                # Map gamepad data to Sabertooth commands
+                current_command = None
+                saber.deactivateAll()
                 if abs(gamepad_data["vertical"]) > DEADZONE:
-                    if (gamepad_data["vertical"] > 0):
+                    if gamepad_data["vertical"] > 0:
                         saber.up()
                         current_command = "up"
                     else:
                         saber.down()
                         current_command = "down"
-                else:
+                elif abs(gamepad_data["vertical"]) <= DEADZONE: 
                     saber.stopupdown()
-
-                 # Movement - Thrust
                 if abs(gamepad_data["thrust"]) > DEADZONE:
-                    if (gamepad_data["thrust"] > 0):
+                    if gamepad_data["thrust"] > 0: 
                         saber.forward()
-                        current_command = "forward"
+                        current_command="forward"
                     else:
                         saber.backward()
-                        current_command = "backward"
-                else:
-                    saber.stopforwardback()
-
- # Movement - Yaw
+                        current_command="backward"
                 if abs(gamepad_data["yaw"]) > DEADZONE:
-                    if gamepad_data["yaw"] > 0.5:
+                    if gamepad_data["yaw"] > threshold:
                         saber.hardRight()
                         current_command = "hardRight"
                     elif gamepad_data["yaw"] > 0:
                         saber.right()
                         current_command = "right"
-                    elif gamepad_data["yaw"] < -0.5:
+                    elif gamepad_data["yaw"] < -threshold:
                         saber.hardLeft()
                         current_command = "hardLeft"
                     else:
                         saber.left()
                         current_command = "left"
-                else:
+                if abs(gamepad_data["thrust"]) <= DEADZONE and abs(gamepad_data["yaw"]) <= DEADZONE:
+                    saber.stopforwardback()
+                if abs(gamepad_data["yaw"]) < DEADZONE and abs(gamepad_data["thrust"]) < DEADZONE and abs(gamepad_data["vertical"]) < DEADZONE:
                     saber.stop()
-
-
-
+                    current_command = None
 
  # Claw
                 if gamepad_data["claw"] != last_claw:
