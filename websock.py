@@ -69,7 +69,7 @@ async def handleWebsocket(websocket):
 
                  # Movement - Thrust
                 if abs(gamepad_data["thrust"]) > DEADZONE:
-                    if (gamepad_data[thrust] > 0):
+                    if (gamepad_data["thrust"] > 0):
                         saber.forward()
                         current_command = "forward"
                     else:
