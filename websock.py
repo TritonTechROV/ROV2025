@@ -14,6 +14,7 @@ UPDATE_SPEED = config.getint("WEB", "tickspeed", fallback=60)
 PORT = config.getint("WEB", "sockport", fallback=8765)
 DEADZONE = config.getfloat("CONTROL", "deadzone", fallback=0.1)
 HOST = config.get("WEB", "host", fallback="127.0.0.1")
+THRESHOLD = 0.5
 
 def eStop():
     print("Stop command received")
@@ -78,13 +79,13 @@ async def handleWebsocket(websocket):
                         saber.backward()
                         current_command="backward"
                 if abs(gamepad_data["yaw"]) > DEADZONE:
-                    if gamepad_data["yaw"] > threshold:
+                    if gamepad_data["yaw"] > THRESHOLD:
                         saber.hardRight()
                         current_command = "hardRight"
                     elif gamepad_data["yaw"] > 0:
                         saber.right()
                         current_command = "right"
-                    elif gamepad_data["yaw"] < -threshold:
+                    elif gamepad_data["yaw"] < -THRESHOLD:
                         saber.hardLeft()
                         current_command = "hardLeft"
                     else:
