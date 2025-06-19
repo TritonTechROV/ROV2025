@@ -25,12 +25,14 @@ def parsePacket(message):
         eStop()
         return None
     elif message.get("type") == "gamepad":
-        return {
+        gamepad = {"vertical": 0.0, "yaw": 0.0, "thrust": 0.0, "claw": 0}
+        gamepad.update({
             "vertical": float(message["vertical"]),
             "yaw": float(message["yaw"]),
             "thrust": float(message["thrust"]),
             "claw": int(message["claw"])
-        }
+        })
+        return gamepad
     return None
 
 async def send_status(websocket, message):
