@@ -6,7 +6,7 @@ import threading
 
 import saber
 import claw
-a
+
 config = configparser.ConfigParser()
 config.read("config.ini")
 
