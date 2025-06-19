@@ -61,6 +61,7 @@ async def handleWebsocket(websocket):
                     direction = "up" if gamepad_data["vertical"] > 0 else "down"
                     getattr(saber, direction)()
                     current_command.append(direction)
+                    saber.up() if (direction == "up") else saber.down()
                 else:
                     saber.stopupdown()
 
@@ -69,6 +70,7 @@ async def handleWebsocket(websocket):
                     direction = "forward" if gamepad_data["thrust"] > 0 else "backward"
                     getattr(saber, direction)()
                     current_command.append(direction)
+                    saber.forward() if (direction == "forward") else saber.backward()
                 else:
                     saber.stopforwardback()
 
@@ -88,6 +90,7 @@ async def handleWebsocket(websocket):
                         current_command.append("left")
                 else:
                     saber.stop()
+
 
 
 
