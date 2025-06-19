@@ -63,6 +63,7 @@ def deactivateAll():
     deactivate(FORWARDSABER)
 
 def forward():
+    print("forward...")
     activate(FORWARDSABER)
     deactivate(UPSABER)
     ser1.write(FORWARD1)
@@ -71,6 +72,7 @@ def forward():
     deactivate(FORWARDSABER)
 
 def backward():
+    print("backward...")
     activate(FORWARDSABER)
     deactivate(UPSABER)
     ser1.write(BACK1)
@@ -79,6 +81,7 @@ def backward():
     deactivate(FORWARDSABER)
 
 def right():
+    print("right...")
     activate(FORWARDSABER)
     deactivate(UPSABER)
     ser1.write(FORWARD2)
@@ -87,6 +90,7 @@ def right():
     deactivate(FORWARDSABER)
 
 def hardRight():
+    print("hard right...")
     activate(FORWARDSABER)
     deactivate(UPSABER)
     ser1.write(FORWARD2)
@@ -95,6 +99,7 @@ def hardRight():
     deactivate(FORWARDSABER)
 
 def left():
+    print("left...")
     activate(FORWARDSABER)
     deactivate(UPSABER)
     ser1.write(FORWARD1)
@@ -103,6 +108,7 @@ def left():
     deactivate(FORWARDSABER)
 
 def hardLeft():
+    print("hard left...")
     activate(FORWARDSABER)
     deactivate(UPSABER)
     ser1.write(FORWARD1)
@@ -111,6 +117,7 @@ def hardLeft():
     deactivate(FORWARDSABER)
 
 def up():
+    print("up...")
     activate(UPSABER)
     ser1.write(FORWARD1)
     time.sleep(SLEEP_TIME)
@@ -118,16 +125,19 @@ def up():
     deactivate(UPSABER)
 
 def stopforwardback():
+    print("stop horizontal...")
     activate(FORWARDSABER)
     ser1.write(ALLSTOP)
     deactivate(FORWARDSABER)
 
 def stopupdown():
+    print("stop vertical...")
     activate(UPSABER)
     ser1.write(ALLSTOP)
     deactivate(FORWARDSABER)
 
 def down():
+    print("down...")
     activate(UPSABER)
     ser1.write(BACK1)
     time.sleep(SLEEP_TIME)
@@ -135,6 +145,7 @@ def down():
     deactivate(UPSABER)
 
 def stop():
+    print("full stop...")
     activate(FORWARDSABER)
     activate(UPSABER)
     ser1.write(ALLSTOP)

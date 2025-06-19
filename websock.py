@@ -56,6 +56,8 @@ async def handleWebsocket(websocket):
                 saber.deactivateAll()
                 current_command = None
 
+                print(gamepad_data)
+
                 # Movement - Vertical
                 if abs(gamepad_data["vertical"]) > DEADZONE:
                     if (gamepad_data["vertical"] > 0):
