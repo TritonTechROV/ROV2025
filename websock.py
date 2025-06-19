@@ -26,10 +26,10 @@ def parsePacket(message):
         return None
     elif message.get("type") == "gamepad":
         return {
-            "vertical": float(message.get("vertical", 0)),
-            "yaw": float(message.get("yaw", 0)),
-            "thrust": float(message.get("thrust", 0)),
-            "claw": int(message.get("claw", claw.HOLD))
+            "vertical": float(message["vertical"]),
+            "yaw": float(message["yaw"]),
+            "thrust": float(message["thrust"]),
+            "claw": int(message["claw"])
         }
     return None
 
