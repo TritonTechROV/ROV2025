@@ -107,7 +107,7 @@ async def handleWebsocket(websocket):
                     claw.set_command(gamepad_data["claw"])
                     last_claw = gamepad_data["claw"]
 
-                await send_status(websocket, f"Command: {','.join(current_command) or 'idle'}, Claw: {last_claw}")
+                await send_status(websocket, f"Command: {current_command or 'idle'}, Claw: {last_claw}")
                 await asyncio.sleep(1 / UPDATE_SPEED)
 
             except Exception as e:
