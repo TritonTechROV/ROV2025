@@ -61,8 +61,6 @@ async def handleWebsocket(websocket):
                 print(gamepad_data)
 
                 # Map gamepad data to Sabertooth commands
-                current_command = None
-                saber.deactivateAll()
                 if abs(gamepad_data["vertical"]) > DEADZONE:
                     if gamepad_data["vertical"] > 0:
                         saber.up()
