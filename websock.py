@@ -54,27 +54,27 @@ async def handleWebsocket(websocket):
                     continue
 
                 saber.deactivateAll()
-                current_command = []
+                current_command = None
 
                 # Movement - Vertical
                 if abs(gamepad_data["vertical"]) > DEADZONE:
                     if (gamepad_data["vertical"] > 0):
-                        current_command.append("up")
                         saber.up()
+                        current_command = "up"
                     else:
-                        current_command.append("down")
                         saber.down()
+                        current_command = "down"
                 else:
                     saber.stopupdown()
 
                  # Movement - Thrust
                 if abs(gamepad_data["thrust"]) > DEADZONE:
                     if (gamepad_data[thrust] > 0):
-                        current_command.append("forward")
                         saber.forward()
+                        current_command = "forward"
                     else:
-                        current_command.append("backward")
                         saber.backward()
+                        current_command = "backward"
                 else:
                     saber.stopforwardback()
 
@@ -82,16 +82,16 @@ async def handleWebsocket(websocket):
                 if abs(gamepad_data["yaw"]) > DEADZONE:
                     if gamepad_data["yaw"] > 0.5:
                         saber.hardRight()
-                        current_command.append("hardRight")
+                        current_command = "hardRight"
                     elif gamepad_data["yaw"] > 0:
                         saber.right()
-                        current_command.append("right")
+                        current_command = "right"
                     elif gamepad_data["yaw"] < -0.5:
                         saber.hardLeft()
-                        current_command.append("hardLeft")
+                        current_command = "hardLeft"
                     else:
                         saber.left()
-                        current_command.append("left")
+                        current_command = "left"
                 else:
                     saber.stop()
 
